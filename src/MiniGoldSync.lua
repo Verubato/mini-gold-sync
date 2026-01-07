@@ -1,5 +1,7 @@
-local addonName, addon = ...
-local frame
+local _, addon = ...
+---@type MiniFramework
+local mini = addon.Framework
+local eventsFrame
 local playerFullName = GetUnitName("player") .. "-" .. GetRealmName()
 local playerShortName = GetUnitName("player")
 local copperPerSilver = 100
@@ -9,13 +11,12 @@ local accountBankType = 2
 ---@type Db
 local db
 
-local function Notify(msg)
+local function Notify(msg, ...)
 	if not db.PrintMessages then
 		return
 	end
 
-	local formatted = string.format("%s - %s", addonName, msg)
-	print(formatted)
+	mini:Notify(msg, ...)
 end
 
 local function FormatWithCommas(value)
@@ -98,7 +99,7 @@ local function Run()
 	end
 
 	if desiredGold < 0 then
-		Notify(string.format("Invalid desired gold value of %d.", desiredGold))
+		Notify("Invalid desired gold value of %d.", desiredGold)
 		return
 	end
 
@@ -107,12 +108,10 @@ local function Run()
 	local delta = desiredCopper - currentCopper
 
 	Notify(
-		string.format(
-			"You have %s gold, desired gold = %s, difference = %s.",
-			FormatWithCommas(currentCopper / copperPerGold),
-			FormatWithCommas(db.DesiredGold),
-			FormatWithCommas(delta / copperPerGold)
-		)
+		"You have %s gold, desired gold = %s, difference = %s.",
+		FormatWithCommas(currentCopper / copperPerGold),
+		FormatWithCommas(db.DesiredGold),
+		FormatWithCommas(delta / copperPerGold)
 	)
 
 	if delta == 0 then
@@ -143,21 +142,14 @@ local function OnEvent(_, event)
 	Run()
 end
 
-local function OnAddonLoaded(_, _, name)
-	if name ~= addonName then
-		return
-	end
-
+local function OnAddonLoaded()
 	addon.Config:Init()
 
-	db = MiniGoldSyncDB or {}
+	db = mini:GetSavedVars()
 
-	frame:UnregisterEvent("ADDON_LOADED")
-
-	frame:SetScript("OnEvent", OnEvent)
-	frame:RegisterEvent("BANKFRAME_OPENED")
+	eventsFrame = CreateFrame("Frame")
+	eventsFrame:SetScript("OnEvent", OnEvent)
+	eventsFrame:RegisterEvent("BANKFRAME_OPENED")
 end
 
-frame = CreateFrame("Frame")
-frame:RegisterEvent("ADDON_LOADED")
-frame:SetScript("OnEvent", OnAddonLoaded)
+mini:WaitForAddonLoad(OnAddonLoaded)

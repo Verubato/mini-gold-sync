@@ -1,4 +1,6 @@
 local addonName, addon = ...
+---@type MiniFramework
+local mini = addon.Framework
 local verticalSpacing = 20
 local db
 ---@class Db
@@ -10,62 +12,6 @@ local dbDefaults = {
 }
 local M = {}
 addon.Config = M
-
-local function CopyTable(src, dst)
-	if type(dst) ~= "table" then
-		dst = {}
-	end
-
-	for k, v in pairs(src) do
-		if type(v) == "table" then
-			dst[k] = CopyTable(v, dst[k])
-		elseif dst[k] == nil then
-			dst[k] = v
-		end
-	end
-
-	return dst
-end
-
-function CanOpenOptionsDuringCombat()
-	if LE_EXPANSION_LEVEL_CURRENT == nil or LE_EXPANSION_MIDNIGHT == nil then
-		return true
-	end
-
-	return LE_EXPANSION_LEVEL_CURRENT < LE_EXPANSION_MIDNIGHT
-end
-
-local function AddCategory(panel)
-	if Settings then
-		local category = Settings.RegisterCanvasLayoutCategory(panel, panel.name)
-		Settings.RegisterAddOnCategory(category)
-
-		return category
-	elseif InterfaceOptions_AddCategory then
-		InterfaceOptions_AddCategory(panel)
-
-		return panel
-	end
-
-	return nil
-end
-
-local function CreatePrintMessagesCheckbox(parent, anchor, xOffset, yOffset)
-	local label = parent:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-	label:SetPoint("TOPLEFT", anchor, "BOTTOMLEFT", xOffset, yOffset)
-	label:SetText("Messages")
-
-	local checkbox = CreateFrame("CheckButton", nil, parent, "UICheckButtonTemplate")
-	checkbox:SetPoint("TOPLEFT", label, "BOTTOMLEFT", 0, -8)
-	checkbox.Text:SetText("Print chat messages")
-	checkbox.Text:SetFontObject("GameFontWhite")
-	checkbox:SetChecked(db.PrintMessages or false)
-	checkbox:SetScript("OnClick", function()
-		db.PrintMessages = checkbox:GetChecked()
-	end)
-
-    return checkbox, label
-end
 
 local function CreateDesiredGoldInput(parent, anchor, xOffset, yOffset)
 	local label = parent:CreateFontString(nil, "OVERLAY", "GameFontNormal")
@@ -355,31 +301,15 @@ local function CreateOverrideGrid(parent, anchor, xOffset, yOffset)
 	Refresh()
 end
 
-local function SettingsSize()
-	local settingsContainer = SettingsPanel and SettingsPanel.Container
-
-	if settingsContainer then
-		return settingsContainer:GetWidth(), settingsContainer:GetHeight()
-	end
-
-	if InterfaceOptionsFramePanelContainer then
-		return InterfaceOptionsFramePanelContainer:GetWidth(), InterfaceOptionsFramePanelContainer:GetHeight()
-	end
-
-	return 600, 600
-end
-
 function M:Init()
-	MiniGoldSyncDB = MiniGoldSyncDB or {}
-	db = CopyTable(dbDefaults, MiniGoldSyncDB)
+	db = mini:GetSavedVars(dbDefaults)
 
 	local scroll = CreateFrame("ScrollFrame", nil, nil, "UIPanelScrollFrameTemplate")
 	scroll.name = addonName
 
-	local category = AddCategory(scroll)
+	local category = mini:AddCategory(scroll)
 	local panel = CreateFrame("Frame")
-
-	local width, height = SettingsSize()
+	local width, height = mini:SettingsSize()
 
 	panel:SetWidth(width)
 	panel:SetHeight(height)
@@ -410,8 +340,21 @@ function M:Init()
 		anchor = description
 	end
 
-    anchor, _ = CreatePrintMessagesCheckbox(panel, anchor, 0, -verticalSpacing)
-	anchor, _ = CreateDesiredGoldInput(panel, anchor, 0, -verticalSpacing)
+	local printMessagesChk = mini:CreateSettingCheckbox({
+		Parent = panel,
+		LabelText = "Print chat messages",
+		GetValue = function ()
+			return  db.PrintMessages
+		end,
+		SetValue = function (enabled)
+			db.PrintMessages = enabled
+		end,
+		Tooltip = "Whether to print messages to the chat frame when things happen."
+	})
+
+	printMessagesChk:SetPoint("TOPLEFT", anchor, "BOTTOMLEFT", 0, -verticalSpacing)
+
+	anchor, _ = CreateDesiredGoldInput(panel, printMessagesChk, 0, -verticalSpacing)
 
 	CreateOverrideGrid(panel, anchor, 0, -verticalSpacing)
 
@@ -420,18 +363,7 @@ function M:Init()
 	SLASH_MINIGOLDSYNC3 = "/mgs"
 	SLASH_MINIGOLDSYNC4 = "/mg"
 
-	SlashCmdList.MINIGOLDSYNC = function()
-		if Settings then
-			if not InCombatLockdown() or CanOpenOptionsDuringCombat() then
-				Settings.OpenToCategory(category:GetID())
-			end
-		elseif InterfaceOptionsFrame_OpenToCategory then
-			-- workaround the classic bug where the first call opens the Game interface
-			-- and a second call is required
-			InterfaceOptionsFrame_OpenToCategory(panel)
-			InterfaceOptionsFrame_OpenToCategory(panel)
-		end
-	end
+	mini:RegisterSlashCommand(category, panel)
 end
 
 ---@class Override
