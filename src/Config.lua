@@ -340,16 +340,16 @@ function M:Init()
 		anchor = description
 	end
 
-	local printMessagesChk = mini:CreateSettingCheckbox({
+	local printMessagesChk = mini:Checkbox({
 		Parent = panel,
 		LabelText = "Print chat messages",
-		GetValue = function ()
-			return  db.PrintMessages
+		GetValue = function()
+			return db.PrintMessages
 		end,
-		SetValue = function (enabled)
+		SetValue = function(enabled)
 			db.PrintMessages = enabled
 		end,
-		Tooltip = "Whether to print messages to the chat frame when things happen."
+		Tooltip = "Whether to print messages to the chat frame when things happen.",
 	})
 
 	printMessagesChk:SetPoint("TOPLEFT", anchor, "BOTTOMLEFT", 0, -verticalSpacing)
@@ -358,12 +358,12 @@ function M:Init()
 
 	CreateOverrideGrid(panel, anchor, 0, -verticalSpacing)
 
-	SLASH_MINIGOLDSYNC1 = "/minigoldsync"
-	SLASH_MINIGOLDSYNC2 = "/minigold"
-	SLASH_MINIGOLDSYNC3 = "/mgs"
-	SLASH_MINIGOLDSYNC4 = "/mg"
-
-	mini:RegisterSlashCommand(category, panel)
+	mini:RegisterSlashCommand(category, panel, {
+		"/minigoldsync",
+		"/minigold",
+		"/mgs",
+		"/mg",
+	})
 end
 
 ---@class Override
