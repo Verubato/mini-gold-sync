@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.1.1
+
+Fixed addon not loading.
+
 ## 1.1.0
 
 Some internal framework updates to make things easier to support/maintain.
