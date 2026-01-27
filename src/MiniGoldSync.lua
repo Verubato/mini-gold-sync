@@ -94,10 +94,6 @@ local function Run()
 		return
 	end
 
-	if desiredGold == 0 then
-		return
-	end
-
 	if desiredGold < 0 then
 		Notify("Invalid desired gold value of %d.", desiredGold)
 		return
