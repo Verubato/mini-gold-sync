@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.2.1
+
+12.1 version support
+
 ## 1.2.0
 
 Allow 0 gold values.

@@ -1,8 +1,8 @@
-## Interface: 120001, 120000, 110207
+## Interface: 120100, 120001, 120000, 110207
 ## Title: MiniGoldSync
 ## Notes: Automatically deposits and withdraws account/warband gold each time you visit the bank.
 ## Author: Verz
-## Version: 1.2.0
+## Version: 1.2.1
 ## SavedVariables: MiniGoldSyncDB
 ## IconTexture: Interface\AddOns\MiniGoldSync\Icon.blp
 ## X-Curse-Project-ID: 1421203
