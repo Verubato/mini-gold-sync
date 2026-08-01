@@ -320,25 +320,14 @@ function M:Init()
 		return
 	end
 
-	local version = C_AddOns.GetAddOnMetadata(addonName, "Version")
-	local title = panel:CreateFontString(nil, "ARTWORK", "GameFontNormalLarge")
-	title:SetPoint("TOPLEFT", 0, -verticalSpacing)
-	title:SetText(string.format("%s - %s", addonName, version))
-
-	local lines = {
-		"Automate withdrawing and depositing gold across your characters.",
-		"Each time you visit the bank, gold will automatically withdraw/deposit based on your settings.",
-	}
-
-	local anchor = title
-
-	for i = 1, #lines do
-		local description = panel:CreateFontString(nil, "ARTWORK", "GameFontWhite")
-		description:SetPoint("TOPLEFT", anchor, "BOTTOMLEFT", 0, -8)
-		description:SetText(lines[i])
-
-		anchor = description
-	end
+	local header = mini:PanelHeader({
+		Parent = panel,
+		Lines = {
+			"Automate withdrawing and depositing gold across your characters.",
+			"Each time you visit the bank, gold will automatically withdraw/deposit based on your settings.",
+		},
+		Y = -verticalSpacing,
+	})
 
 	local printMessagesChk = mini:Checkbox({
 		Parent = panel,
@@ -352,9 +341,9 @@ function M:Init()
 		Tooltip = "Whether to print messages to the chat frame when things happen.",
 	})
 
-	printMessagesChk:SetPoint("TOPLEFT", anchor, "BOTTOMLEFT", 0, -verticalSpacing)
+	printMessagesChk:SetPoint("TOPLEFT", header.Anchor, "BOTTOMLEFT", 0, -verticalSpacing)
 
-	anchor, _ = CreateDesiredGoldInput(panel, printMessagesChk, 0, -verticalSpacing)
+	local anchor = CreateDesiredGoldInput(panel, printMessagesChk, 0, -verticalSpacing)
 
 	CreateOverrideGrid(panel, anchor, 0, -verticalSpacing)
 
