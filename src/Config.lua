@@ -326,7 +326,6 @@ function M:Init()
 			"Automate withdrawing and depositing gold across your characters.",
 			"Each time you visit the bank, gold will automatically withdraw/deposit based on your settings.",
 		},
-		Y = -verticalSpacing,
 	})
 
 	local printMessagesChk = mini:Checkbox({
