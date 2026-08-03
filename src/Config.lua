@@ -10,6 +10,7 @@ local dbDefaults = {
 	---@type Override[]
 	Overrides = {},
 }
+---@class Config
 local M = {}
 addon.Config = M
 
