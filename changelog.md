@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.3.2
+
+Updated interface versions for the latest client builds.
+
 ## 1.3.1
 
 Config framework update.
