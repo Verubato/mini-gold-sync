@@ -19,7 +19,7 @@ Feedback and feature requests are more than welcome!
 
 ## Screenshots
 
-![MiniGoldSync screenshot](https://media.forgecdn.net/attachments/1452/379/screenshot-png.png)
+![MiniGoldSync screenshot](https://raw.githubusercontent.com/Verubato/mini-gold-sync/main/assets/Screenshot.png)
 
 ## Download
 
