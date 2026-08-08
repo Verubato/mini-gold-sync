@@ -2,7 +2,7 @@
 ## Title: MiniGoldSync
 ## Notes: Automatically deposits and withdraws account/warband gold each time you visit the bank.
 ## Author: Verz
-## Version: 1.3.2
+## Version: 1.3.3
 ## SavedVariables: MiniGoldSyncDB
 ## IconTexture: Interface\AddOns\MiniGoldSync\Icon.blp
 ## X-Curse-Project-ID: 1421203
