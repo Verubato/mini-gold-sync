@@ -16,7 +16,7 @@ local function Notify(msg, ...)
 		return
 	end
 
-	mini:Notify(msg, ...)
+	mini:NotifyWithPrefix(msg, ...)
 end
 
 local function FormatWithCommas(value)
