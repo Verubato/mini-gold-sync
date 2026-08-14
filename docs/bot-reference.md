@@ -12,9 +12,9 @@ amounts and a per-character ignore flag are supported.
 
 | Item | Value |
 | --- | --- |
-| Version | 1.3.3 |
+| Version | 1.3.4 |
 | Author | Verz |
-| Interface versions (TOC) | 120100, 120007, 120001, 120000, 110207 (retail only: The War Within and Midnight) |
+| Interface versions (TOC) | 120100 (retail only: Midnight 12.1) |
 | Saved variables | MiniGoldSyncDB |
 | Slash commands | /minigoldsync, /minigold, /mgs, /mg (all open the settings panel) |
 | Options location | Game options -> AddOns -> MiniGoldSync |
@@ -69,10 +69,10 @@ There is no reset-to-defaults button; settings live in MiniGoldSyncDB.
 
 ## Version-gated behavior
 
-- Retail only (11.2.x and 12.x clients per the TOC). There is no Classic support
-  because the warband bank does not exist there.
-- On Midnight (12.x) clients the settings panel cannot be opened during combat; the
-  slash command prints "Can't do that during combat." instead.
+- Retail 12.1 only per the TOC. There is no Classic support because the warband
+  bank does not exist there.
+- The settings panel cannot be opened during combat; the slash command prints
+  "Can't do that during combat." instead.
 
 ## Troubleshooting
 
