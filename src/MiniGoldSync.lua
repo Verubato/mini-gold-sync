@@ -2,8 +2,8 @@ local _, addon = ...
 ---@type MiniFramework
 local mini = addon.Framework
 local eventsFrame
-local playerFullName = GetUnitName("player") .. "-" .. GetRealmName()
-local playerShortName = GetUnitName("player")
+local playerFullName
+local playerShortName
 local copperPerSilver = 100
 local silverPerGOld = 100
 local copperPerGold = copperPerSilver * silverPerGOld
@@ -35,11 +35,54 @@ local function FormatWithCommas(value)
 	return result
 end
 
+---Works out this character's name in both the forms an override can be written in. Resolved
+---on first use rather than while the file loads: the realm is not always known that early, and
+---concatenating a nil one would take the whole addon down with it.
+local function EnsurePlayerNames()
+	if playerShortName then
+		return
+	end
+
+	local name = GetUnitName("player")
+
+	if not name or name == "" then
+		return
+	end
+
+	playerShortName = name
+
+	local realm = GetRealmName()
+
+	if realm and realm ~= "" then
+		playerFullName = name .. "-" .. realm
+	end
+end
+
+---An override is this character's when it names them either way round. The name is typed by
+---hand in the config, so both the realm-qualified and bare forms have to match.
+local function IsCurrentCharacter(override)
+	if not override then
+		return false
+	end
+
+	local name = override.CharacterName
+
+	-- A row starts life with an empty name, and either of the names below can still be
+	-- unresolved, so an empty one must never match by both sides being nil.
+	if type(name) ~= "string" or name == "" then
+		return false
+	end
+
+	EnsurePlayerNames()
+
+	return name == playerFullName or name == playerShortName
+end
+
 local function GetOverrideGold()
 	for i = 1, #db.Overrides do
 		local o = db.Overrides[i]
 
-		if o and o.CharacterName == playerFullName or o.CharacterName == playerShortName then
+		if IsCurrentCharacter(o) then
 			return tonumber(o.Gold)
 		end
 	end
@@ -51,7 +94,7 @@ local function IsIgnored()
 	for i = 1, #db.Overrides do
 		local o = db.Overrides[i]
 
-		if o and o.CharacterName == playerFullName or o.CharacterName == playerShortName then
+		if IsCurrentCharacter(o) then
 			return o.Ignore
 		end
 	end
