@@ -12,7 +12,7 @@ amounts and a per-character ignore flag are supported.
 
 | Item | Value |
 | --- | --- |
-| Version | 1.3.4 |
+| Version | 1.3.6 |
 | Author | Verz |
 | Interface versions (TOC) | 120100 (retail only: Midnight 12.1) |
 | Saved variables | MiniGoldSyncDB |
