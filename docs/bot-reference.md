@@ -43,13 +43,14 @@ recommends including the server name but it is not required.
 
 ## Settings
 
-Single scrollable options panel.
+Single scrollable options panel. Its header carries a **Reset to Defaults**
+button, which resets every setting after a Yes/No confirmation.
 
 | Setting | Type | Default | Notes |
 | --- | --- | --- | --- |
-| Print chat messages | checkbox | on | Prints what happened at each bank visit. |
 | Desired Gold | numeric edit box | 0 | Target gold for every character without an override. Whole gold, minimum 0, up to 12 digits. Committed on Enter or when the box loses focus. |
 | Character Overrides | row grid | one empty row | Per-character rules, see below. |
+| Print chat messages | checkbox | on | Under its own Misc section, below the override grid. Prints what happened at each bank visit. |
 
 ### Character Overrides grid
 
@@ -64,8 +65,6 @@ Each row has:
 
 The "Add" button next to the first row appends a new row. Edits are committed on
 Enter or when leaving the box.
-
-There is no reset-to-defaults button; settings live in MiniGoldSyncDB.
 
 ## Version-gated behavior
 

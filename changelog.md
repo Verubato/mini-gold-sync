@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.3.7
+
+UI improvements.
+
 ## 1.3.6
 
 Fixed a possible error when an override row was missing, and made the character name lookup safe on clients that do not know the realm name at load.
