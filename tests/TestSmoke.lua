@@ -19,7 +19,7 @@ local function HasDivider(text)
 	return false
 end
 
----The confirmation dialog is a frame the framework owns, so a test reaches it by its button label.
+---The reset button is a frame the framework owns, so a test reaches it by its label.
 ---@param label string
 ---@return table?
 local function FindButton(label)
@@ -30,6 +30,31 @@ local function FindButton(label)
 	end
 
 	return nil
+end
+
+---The client does nothing with a prompt in the mock, so a test stands in for it.
+---@param open fun()
+local function AcceptConfirm(open)
+	local seen
+	local real = StaticPopup_Show
+
+	StaticPopup_Show = function(which, _, _, data)
+		seen = { Which = which, Data = data }
+	end
+
+	local ok, err = pcall(open)
+
+	StaticPopup_Show = real
+
+	if not ok then
+		error(err, 0)
+	end
+
+	if not seen then
+		error("no confirmation was opened")
+	end
+
+	StaticPopupDialogs[seen.Which].OnAccept(nil, seen.Data)
 end
 
 ---The desired gold box is the only edit box in the addon with a tooltip, so that is how a
@@ -66,11 +91,10 @@ smoke.Run("MiniGoldSync", {
 
 		local resetBtn = FindButton("Reset to Defaults")
 		fw.not_nil(resetBtn, "reset button exists")
-		resetBtn:Click()
 
-		local confirmAccept = FindButton("Reset")
-		fw.not_nil(confirmAccept, "the confirmation dialog opened")
-		confirmAccept:Click()
+		AcceptConfirm(function()
+			resetBtn:Click()
+		end)
 
 		fw.eq(db.PrintMessages, true, "reset restored PrintMessages")
 		fw.eq(db.DesiredGold, 0, "reset restored DesiredGold")

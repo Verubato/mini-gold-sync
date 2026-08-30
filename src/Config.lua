@@ -2,6 +2,7 @@ local addonName, addon = ...
 ---@type MiniFramework
 local mini = addon.Framework
 local verticalSpacing = 20
+local rowHeight = 26
 local db
 ---@class Db
 local dbDefaults = {
@@ -116,9 +117,13 @@ local function CreateOverrideGrid(parent, anchor, xOffset, yOffset)
 	headerGold:SetPoint("LEFT", headerName, "LEFT", 232, 0)
 	headerGold:SetText("Override Gold")
 
+	-- The container bounds every row, so a later section can anchor beneath it.
 	local container = CreateFrame("Frame", nil, parent)
 	container:SetPoint("TOPLEFT", headerIgnore, "BOTTOMLEFT", -30, -6)
-	container:SetSize(620, 220)
+	-- Height is set by Refresh, which is the only thing that knows how many rows there are.
+	container:SetWidth(620)
+
+	local grid = { Container = container }
 
 	-- OnClick is wired up below, once the functions it calls are defined.
 	local addBtn = mini:Button({
@@ -129,7 +134,6 @@ local function CreateOverrideGrid(parent, anchor, xOffset, yOffset)
 	})
 
 	local rows = {}
-	local rowHeight = 26
 
 	local function EnsureAtLeastOneRow()
 		if type(db.Overrides) ~= "table" then
@@ -278,6 +282,14 @@ local function CreateOverrideGrid(parent, anchor, xOffset, yOffset)
 		else
 			addBtn:Hide()
 		end
+
+		-- Rows stack downwards, so the container has to grow with them or the section below
+		-- overlaps the last row.
+		container:SetHeight(#db.Overrides * rowHeight)
+
+		if grid.OnResize then
+			grid.OnResize()
+		end
 	end
 
 	addBtn:SetScript("OnClick", function()
@@ -294,9 +306,11 @@ local function CreateOverrideGrid(parent, anchor, xOffset, yOffset)
 		end
 	end)
 
+	grid.Refresh = Refresh
+
 	Refresh()
 
-	return { Refresh = Refresh }
+	return grid
 end
 
 function M:Init()
@@ -338,6 +352,14 @@ function M:Init()
 		},
 	})
 
+	local anchor = CreateDesiredGoldInput(panel, header.Anchor, 0, -verticalSpacing)
+
+	grid = CreateOverrideGrid(panel, anchor, 0, -verticalSpacing)
+
+	local miscDivider = mini:Divider({ Parent = panel, Text = "Misc" })
+	miscDivider:SetPoint("TOPLEFT", grid.Container, "BOTTOMLEFT", 0, -verticalSpacing)
+	miscDivider:SetPoint("RIGHT", panel, "RIGHT", 0, 0)
+
 	local printMessagesChk = mini:Checkbox({
 		Parent = panel,
 		LabelText = "Print chat messages",
@@ -350,11 +372,16 @@ function M:Init()
 		Tooltip = "Whether to print messages to the chat frame when things happen.",
 	})
 
-	printMessagesChk:SetPoint("TOPLEFT", header.Anchor, "BOTTOMLEFT", 0, -verticalSpacing)
+	printMessagesChk:SetPoint("TOPLEFT", miscDivider, "BOTTOMLEFT", 0, -verticalSpacing)
 
-	local anchor = CreateDesiredGoldInput(panel, printMessagesChk, 0, -verticalSpacing)
+	-- At the settings container's own height the scroll child has nothing to scroll.
+	grid.OnResize = function()
+		local _, minimum = mini:SettingsSize()
 
-	grid = CreateOverrideGrid(panel, anchor, 0, -verticalSpacing)
+		panel:SetHeight(minimum + math.max(0, grid.Container:GetHeight() - rowHeight))
+	end
+
+	grid.OnResize()
 
 	mini:RegisterSlashCommand(category, panel, {
 		"/minigoldsync",
