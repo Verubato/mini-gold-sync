@@ -84,9 +84,9 @@ local function CreateRow(parent, y)
 end
 
 local function CreateOverrideGrid(parent, anchor, xOffset, yOffset)
-	local title = parent:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+	local title = mini:Divider({ Parent = parent, Text = "Character Overrides" })
 	title:SetPoint("TOPLEFT", anchor, "BOTTOMLEFT", xOffset, yOffset)
-	title:SetText("Character Overrides")
+	title:SetPoint("RIGHT", parent, "RIGHT", 0, 0)
 
 	local lines = {
 		"A list of gold amounts per character to use instead of the default desired gold amount.",

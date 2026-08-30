@@ -50,6 +50,7 @@ smoke.Run("MiniGoldSync", {
 		fw.eq(context.Addon.Framework.CustomStyling, true, "custom styling on")
 		fw.eq(context.Addon.Framework.CustomStylingOverrides.Button, false, "stock buttons")
 		fw.truthy(HasDivider("SETTINGS"), "the settings section rule under the header")
+		fw.truthy(HasDivider("CHARACTER OVERRIDES"), "the character overrides section rule")
 
 		local goldBox = FindDesiredGoldEditBox()
 		fw.not_nil(goldBox, "the desired gold edit box")
