@@ -293,6 +293,8 @@ local function CreateOverrideGrid(parent, anchor, xOffset, yOffset)
 	end)
 
 	Refresh()
+
+	return { Refresh = Refresh }
 end
 
 function M:Init()
@@ -317,11 +319,20 @@ function M:Init()
 		return
 	end
 
+	local grid
+
 	local header = mini:PanelHeader({
 		Parent = panel,
 		Lines = {
 			"Automate withdrawing and depositing gold across your characters.",
 			"Each time you visit the bank, gold will automatically withdraw/deposit based on your settings.",
+		},
+		Divider = true,
+		Reset = {
+			OnAccept = function()
+				db = mini:ResetSavedVars(dbDefaults)
+				grid.Refresh()
+			end,
 		},
 	})
 
@@ -341,7 +352,7 @@ function M:Init()
 
 	local anchor = CreateDesiredGoldInput(panel, printMessagesChk, 0, -verticalSpacing)
 
-	CreateOverrideGrid(panel, anchor, 0, -verticalSpacing)
+	grid = CreateOverrideGrid(panel, anchor, 0, -verticalSpacing)
 
 	mini:RegisterSlashCommand(category, panel, {
 		"/minigoldsync",
