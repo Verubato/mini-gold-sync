@@ -32,7 +32,9 @@ local function CreateDesiredGoldInput(parent, anchor, xOffset, yOffset)
 	local editBox, label = goldInput.EditBox, goldInput.Label
 
 	label:SetPoint("TOPLEFT", anchor, "BOTTOMLEFT", xOffset, yOffset)
-	editBox:SetPoint("TOPLEFT", label, "BOTTOMLEFT", 4, -8)
+	-- 6px, not less: the flattened field's border draws 6px left of the box's own frame,
+	-- so anything smaller pokes past the panel's edge and gets clipped by the scroll frame.
+	editBox:SetPoint("TOPLEFT", label, "BOTTOMLEFT", 6, -8)
 	editBox:SetMaxLetters(12)
 
 	editBox:SetScript("OnEnter", function(self)
