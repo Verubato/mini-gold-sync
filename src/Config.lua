@@ -15,36 +15,25 @@ local M = {}
 addon.Config = M
 
 local function CreateDesiredGoldInput(parent, anchor, xOffset, yOffset)
-	local label = parent:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+	local goldInput = mini:EditBox({
+		Parent = parent,
+		LabelText = "Desired Gold",
+		Numeric = true,
+		Width = 120,
+		Height = 20,
+		GetValue = function()
+			return db.DesiredGold or 0
+		end,
+		SetValue = function(value)
+			db.DesiredGold = math.max(0, tonumber(value) or 0)
+		end,
+	})
+
+	local editBox, label = goldInput.EditBox, goldInput.Label
+
 	label:SetPoint("TOPLEFT", anchor, "BOTTOMLEFT", xOffset, yOffset)
-	label:SetText("Desired Gold")
-
-	local editBox = CreateFrame("EditBox", nil, parent, "InputBoxTemplate")
-	editBox:SetSize(120, 20)
 	editBox:SetPoint("TOPLEFT", label, "BOTTOMLEFT", 4, -8)
-	editBox:SetAutoFocus(false)
-	editBox:SetNumeric(true)
 	editBox:SetMaxLetters(12)
-	editBox:SetText(tostring(db.DesiredGold or 0))
-	editBox:SetCursorPosition(0)
-
-	editBox:SetScript("OnEnterPressed", function(self)
-		self:ClearFocus()
-
-		local value = tonumber(self:GetText()) or 0
-		value = math.max(0, value)
-
-		db.DesiredGold = value
-		self:SetText(value)
-	end)
-
-	editBox:SetScript("OnEditFocusLost", function(self)
-		local value = tonumber(self:GetText()) or 0
-		value = math.max(0, value)
-
-		db.DesiredGold = value
-		self:SetText(value)
-	end)
 
 	editBox:SetScript("OnEnter", function(self)
 		GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
@@ -129,9 +118,13 @@ local function CreateOverrideGrid(parent, anchor, xOffset, yOffset)
 	container:SetPoint("TOPLEFT", headerIgnore, "BOTTOMLEFT", -30, -6)
 	container:SetSize(620, 220)
 
-	local addBtn = CreateFrame("Button", nil, parent, "UIPanelButtonTemplate")
-	addBtn:SetSize(90, 22)
-	addBtn:SetText("Add")
+	-- OnClick is wired up below, once the functions it calls are defined.
+	local addBtn = mini:Button({
+		Parent = parent,
+		Text = "Add",
+		Width = 90,
+		Height = 22,
+	})
 
 	local rows = {}
 	local rowHeight = 26
@@ -303,6 +296,9 @@ local function CreateOverrideGrid(parent, anchor, xOffset, yOffset)
 end
 
 function M:Init()
+	-- A styled button clashes with the stock Blizzard art around it in the settings screen.
+	mini:SetCustomStyling(true, { Button = false })
+
 	db = mini:GetSavedVars(dbDefaults)
 
 	local scroll = CreateFrame("ScrollFrame", nil, nil, "UIPanelScrollFrameTemplate")
