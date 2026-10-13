@@ -12,9 +12,9 @@ amounts and a per-character ignore flag are supported.
 
 | Item | Value |
 | --- | --- |
-| Version | 1.3.6 |
+| Version | 1.3.8 |
 | Author | Verz |
-| Interface versions (TOC) | 120100 (retail only: Midnight 12.1) |
+| Interface versions (TOC) | 120105, 120100 (retail only: Midnight 12.1) |
 | Saved variables | MiniGoldSyncDB |
 | Slash commands | /minigoldsync, /minigold, /mgs, /mg (all open the settings panel) |
 | Options location | Game options -> AddOns -> MiniGoldSync |
